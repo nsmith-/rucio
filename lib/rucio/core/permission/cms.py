@@ -166,6 +166,14 @@ def perm_add_rule(issuer, kwargs):
     """
 
     rses = parse_expression(kwargs['rse_expression'], filter={'vo': issuer.vo})
+
+    # Keep while sync is running so it can make rules on all RSEs
+    if _is_root(issuer) and repr(kwargs['account']).startswith('sync_'):
+        return True
+
+    if isinstance(repr(issuer), basestring) and repr(issuer).startswith('sync_'):
+        return True
+
     # If all the RSEs matching the expression need approval, the rule cannot be created
     if not kwargs['ask_approval']:
         all_rses_need_approval = True

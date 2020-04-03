@@ -369,7 +369,7 @@ def __check_rse_usage(rse, rse_id, prepend_str):
     return result
 
 
-def reaper(rses, include_rses, exclude_rses, vos=None, chunk_size=100, once=False, greedy=False,
+def reaper(rses, include_rses, exclude_rses, include_dids=None, exclude_dids=None, vos=None, chunk_size=100, once=False, greedy=False,
            scheme=None, delay_seconds=0, sleep_time=60):
     """
     Main loop to select and delete files.
@@ -377,6 +377,8 @@ def reaper(rses, include_rses, exclude_rses, vos=None, chunk_size=100, once=Fals
     :param rses:           List of RSEs the reaper should work against. If empty, it considers all RSEs.
     :param include_rses:   RSE expression to include RSEs.
     :param exclude_rses:   RSE expression to exclude RSEs from the Reaper.
+    :param exclude_dids:   DID pattern to exclude from reaping
+    :param include_dids:   DID pattern to require for reaping (exlude others)
     :param vos:            VOs on which to look for RSEs. Only used in multi-VO mode.
                            If None, we either use all VOs if run from "def", or the current VO otherwise.
     :param chunk_size:     The size of chunk for deletion.
@@ -538,10 +540,24 @@ def reaper(rses, include_rses, exclude_rses, vos=None, chunk_size=100, once=Fals
                 # Physical  deletion will take place there
                 try:
                     prot = rsemgr.create_protocol(rse_info, 'delete', scheme=scheme)
-                    for file_replicas in chunks(replicas, 100):
+                    for check_replicas in chunks(replicas, 100):
                         # Refresh heartbeat
                         live(executable, hostname, pid, hb_thread, older_than=600, hash_executable=None, payload=rse_hostname_key, session=None)
                         del_start_time = time.time()
+
+                        file_replicas = []
+                        if not exclude_dids and not include_dids:
+                            file_replicas = check_replicas
+                        else:
+                            for replica in check_replicas:
+                                did = '%s:%s' % (replica['scope'] ,replica['name'])
+                                if exclude_dids and exclude_dids in did:
+                                    continue
+                                if include_dids and include_dids in did:
+                                    file_replicas.append(replica)
+                                    continue
+                                if exclude_dids and not include_dids:
+                                    file_replicas.append(replica)
                         for replica in file_replicas:
                             try:
                                 replica['pfn'] = str(list(rsemgr.lfns2pfns(rse_settings=rse_info,
@@ -596,7 +612,7 @@ def stop(signum=None, frame=None):
     GRACEFUL_STOP.set()
 
 
-def run(threads=1, chunk_size=100, once=False, greedy=False, rses=None, scheme=None, exclude_rses=None, include_rses=None, vos=None, delay_seconds=0, sleep_time=60):
+def run(threads=1, chunk_size=100, once=False, greedy=False, rses=None, scheme=None, exclude_rses=None, exclude_dids=None, include_dids=None, include_rses=None, vos=None, delay_seconds=0, sleep_time=60):
     """
     Starts up the reaper threads.
 
@@ -610,6 +626,8 @@ def run(threads=1, chunk_size=100, once=False, greedy=False, rses=None, scheme=N
     :param scheme:             Force the reaper to use a particular protocol/scheme, e.g., mock.
     :param exclude_rses:       RSE expression to exclude RSEs from the Reaper.
     :param include_rses:       RSE expression to include RSEs.
+    :param exclude_dids:       DID pattern to exclude from reaping
+    :param include_dids:       DID pattern to include in reaping (exclude all others)
     :param vos:                VOs on which to look for RSEs. Only used in multi-VO mode.
                                If None, we either use all VOs if run from "def",
                                or the current VO otherwise.
@@ -634,6 +652,8 @@ def run(threads=1, chunk_size=100, once=False, greedy=False, rses=None, scheme=N
                                                             'include_rses': include_rses,
                                                             'exclude_rses': exclude_rses,
                                                             'vos': vos,
+                                                            'include_dids': include_dids,
+                                                            'exclude_dids': exclude_dids,
                                                             'chunk_size': chunk_size,
                                                             'greedy': greedy,
                                                             'sleep_time': sleep_time,
