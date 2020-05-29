@@ -450,7 +450,7 @@ class Default(protocol.RSEProtocol):
 
         try:
             for path in paths:
-                if self.__gfal2_exist(path):
+                if self.__gfal2_exist(path) == 0:
                     ret = ctx.unlink(str(path))
                     if ret:
                         return ret
