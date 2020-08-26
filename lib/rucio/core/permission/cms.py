@@ -116,7 +116,12 @@ def has_permission(issuer, action, kwargs):
             'del_account_identity': perm_del_account_identity,
             'del_identity': perm_del_identity,
             'remove_did_from_followed': perm_remove_did_from_followed,
-            'remove_dids_from_followed': perm_remove_dids_from_followed}
+            'remove_dids_from_followed': perm_remove_dids_from_followed,
+            'add_vo': perm_add_vo,
+            'list_vos': perm_list_vos,
+            'recover_vo_root_identity': perm_recover_vo_root_identity,
+            'update_vo': perm_update_vo,
+            'access_rule_vo': perm_access_rule_vo}
 
     return perm.get(action, perm_default)(issuer=issuer, kwargs=kwargs)
 
@@ -1073,3 +1078,52 @@ def perm_remove_dids_from_followed(issuer, kwargs):
     if not kwargs['account'] == issuer:
         return False
     return True
+
+def perm_add_vo(issuer, kwargs):
+    """
+    Checks if an account can add a VO.
+    :param issuer: Account identifier which issues the command.
+    :param kwargs: List of arguments for the action.
+    :returns: True if account is allowed, otherwise False
+    """
+    return (issuer.internal == 'super_root')
+
+
+def perm_list_vos(issuer, kwargs):
+    """
+    Checks if an account can list a VO.
+    :param issuer: Account identifier which issues the command.
+    :param kwargs: List of arguments for the action.
+    :returns: True if account is allowed, otherwise False
+    """
+    return (issuer.internal == 'super_root')
+
+
+def perm_recover_vo_root_identity(issuer, kwargs):
+    """
+    Checks if an account can recover identities for VOs.
+    :param issuer: Account identifier which issues the command.
+    :param kwargs: List of arguments for the action.
+    :returns: True if account is allowed, otherwise False
+    """
+    return (issuer.internal == 'super_root')
+
+
+def perm_update_vo(issuer, kwargs):
+    """
+    Checks if an account can update a VO.
+    :param issuer: Account identifier which issues the command.
+    :param kwargs: List of arguments for the action.
+    :returns: True if account is allowed, otherwise False
+    """
+    return (issuer.internal == 'super_root')
+
+
+def perm_access_rule_vo(issuer, kwargs):
+    """
+    Checks if we're at the same VO as the rule_id's
+    :param issuer: Account identifier which issues the command.
+    :param kwargs: List of arguments for the action.
+    :returns: True if account is allowed, otherwise False
+    """
+    return get_rule(kwargs['rule_id'])['scope'].vo == issuer.vo
