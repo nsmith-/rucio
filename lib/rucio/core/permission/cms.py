@@ -428,6 +428,14 @@ def perm_add_did(issuer, kwargs):
             if rule['account'] != issuer:
                 return False
 
+    if kwargs['scope'].external != u'cms':
+        if kwargs['type'] == 'DATASET':
+            if '/USER#' not in kwargs['name']:
+                return False
+        elif kwargs['type'] == 'CONTAINER':
+            if not kwargs['name'].endswith('/USER'):
+                return False
+
     return (_is_root(issuer)
             or has_account_attribute(account=issuer, key='admin')  # NOQA: W503
             or rucio.core.scope.is_scope_owner(scope=kwargs['scope'], account=issuer)  # NOQA: W503
