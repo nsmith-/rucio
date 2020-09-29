@@ -28,7 +28,7 @@ from rucio.core.rse_expression_parser import parse_expression
 from rucio.core.rule import get_rule
 from rucio.db.sqla.constants import IdentityType
 
-CAN_ADD_ANY_RULE = ['sync_', 'wma_']
+CAN_ADD_ANY_RULE = ['sync_', 'wma_', 'wmcore_']
 MANAGED_DATATIERS = ['USER', 'NANOAOD', 'NANOAODSIM']
 
 def has_permission(issuer, action, kwargs):
@@ -180,16 +180,6 @@ def perm_add_rule(issuer, kwargs):
 
     if isinstance(repr(issuer), basestring) and repr(issuer).startswith('sync_'):
         return True
-
-    # If all the RSEs matching the expression need approval, the rule cannot be created
-    if not kwargs['ask_approval']:
-        all_rses_need_approval = True
-        for rse in rses:
-            rse_attr = list_rse_attributes(rse_id=rse['id'])
-            if rse_attr.get('requires_approval', False):
-                all_rses_need_approval = False
-        if not all_rses_need_approval:
-            return False
 
     # Early CMS can approve the rule if
     # Are all the RSEs OK?
