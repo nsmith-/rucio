@@ -181,10 +181,21 @@ def perm_add_rule(issuer, kwargs):
     if isinstance(repr(issuer), basestring) and repr(issuer).startswith('sync_'):
         return True
 
+    # Anyone can use _Temp RSEs if a lifetime is set and under a month
+    all_temp = True
+    for rse in rses:
+        rse_attr = list_rse_attributes(rse_id=rse['id'])
+        rse_type = rse_attr.get('cms_type', None)
+        if rse_type not in ['temp']:
+            all_temp = False
+
+    if all_temp and kwargs['lifetime'] is not None and kwargs['lifetime'] < 31 * 24 * 60 * 60:
+        return True
+
     # Early CMS can approve the rule if
     # Are all the RSEs OK?
     # Or the account is a special one
-    # Or the data tier is a special onex
+    # Or the data tier is a special one
 
     # Are all the RSEs OK?
     rses_ok = True
@@ -202,14 +213,14 @@ def perm_add_rule(issuer, kwargs):
 
     # Is the data tier clear
     tier_ok = True
-    for did in kwargs['dids']:
-        this_did_ok = False
-        for tier in MANAGED_DATATIERS:
-            check_tier = '/'+tier
-            if check_tier in did['name']:
-                this_did_ok = True
-        if not this_did_ok:
-            tier_ok = False
+    # for did in kwargs['dids']:
+    #     this_did_ok = False
+    #     for tier in MANAGED_DATATIERS:
+    #         check_tier = '/'+tier
+    #         if check_tier in did['name']:
+    #             this_did_ok = True
+    #     if not this_did_ok:
+    #         tier_ok = False
 
     if not rses_ok and not account_ok and not tier_ok:
         return False
