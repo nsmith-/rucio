@@ -833,6 +833,11 @@ def perm_set_rse_usage(issuer, kwargs):
     :param kwargs: List of arguments for the action.
     :returns: True if account is allowed to call the API call, otherwise False
     """
+    if kwargs['source'] == 'storage':
+        rse_attr = list_rse_attributes(rse_id=kwargs['rse_id'])
+        quota_approvers = rse_attr.get('quota_approvers', None)
+        if quota_approvers and issuer.external in quota_approvers.split(','):
+            return True
     return _is_root(issuer)
 
 

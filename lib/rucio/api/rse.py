@@ -284,7 +284,7 @@ def set_rse_usage(rse, source, used, free, issuer, vo='def'):
     """
     rse_id = rse_module.get_rse_id(rse=rse, vo=vo)
 
-    kwargs = {'rse': rse, 'rse_id': rse_id}
+    kwargs = {'rse': rse, 'rse_id': rse_id, 'source': source}
     if not permission.has_permission(issuer=issuer, vo=vo, action='set_rse_usage', kwargs=kwargs):
         raise exception.AccessDenied('Account %s can not update RSE usage information for RSE %s' % (issuer, rse))
 
