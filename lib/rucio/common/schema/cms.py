@@ -265,13 +265,6 @@ DID = {"description": "Data Identifier(DID)",
             "then": {"properties": {"name": {"pattern": CMS_LFN}}}},
            {"if": {"properties": {"type": {"const": "F"}}},
             "then": {"properties": {"name": {"pattern": CMS_LFN}}}},
-           {"if": {"allOf": [
-               {"properties": {"scope": {"pattern": "^user\\."}}},
-               {"properties": {"type": {"const": "FILE"}}},
-           ], },
-               "then": {"properties": {"name": {"pattern": "^/store/user/rucio/"}}}},
-           {"if": {"properties": {"scope": {"const": "cms"}}},
-            "then": {"properties": {"name": {"not": {"pattern": "^/store/user/"}}}}},
        ],
        "required": ["scope", "name", "type"],
        "additionalProperties": False}
