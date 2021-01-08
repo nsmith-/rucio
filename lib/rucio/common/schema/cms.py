@@ -60,7 +60,7 @@ SCOPE_LENGTH = 25
 
 SCOPE = {"description": "Scope name",
          "type": "string",
-         "pattern": r"^(cms)|(user\.[a-z0-9-_]{1,%s})$" % (SCOPE_LENGTH - len('user.'))}
+         "pattern": r"^(cms)|(logs)|(user\.[a-z0-9-_]{1,%s})$" % (SCOPE_LENGTH - len('user.'))}
 
 R_SCOPE = {"description": "Scope name",
            "type": "string",
@@ -467,3 +467,6 @@ def validate_cms_did(obj):
         _, user = scope.split('.', 1)
         if not lfn.startswith('/store/user/rucio/%s/' % user):
             raise InvalidObject("Problem with LFN %(lfn)s : Not allowed for user %(user)s" % locals())
+    if scope == 'logs' and did_type == 'FILE':
+        if not lfn.startswith('/store/logs/'):
+            raise InvalidObject("Problem with LFN %(lfn)s : Logs must start with /store/logs" % locals())
