@@ -821,13 +821,13 @@ def perm_set_local_account_limit(issuer, kwargs):
     """
     if _is_root(issuer) or has_account_attribute(account=issuer, key='admin'):
         return True
-    # Check if user is a country admin
-    admin_in_country = []
-    for kv in list_account_attributes(account=issuer):
-        if kv['key'].startswith('country-') and kv['value'] == 'admin':
-            admin_in_country.append(kv['key'].partition('-')[2])
-    if admin_in_country and list_rse_attributes(rse_id=kwargs['rse_id']).get('country') in admin_in_country:
-        return True
+    # # Check if user is a country admin
+    # admin_in_country = []
+    # for kv in list_account_attributes(account=issuer):
+    #     if kv['key'].startswith('country-') and kv['value'] == 'admin':
+    #         admin_in_country.append(kv['key'].partition('-')[2])
+    # if admin_in_country and list_rse_attributes(rse_id=kwargs['rse_id']).get('country') in admin_in_country:
+    #     return True
 
     # Those listed as quota approvers can add to quotas
     rse_attr = list_rse_attributes(rse_id=kwargs['rse_id'])
@@ -848,15 +848,15 @@ def perm_set_global_account_limit(issuer, kwargs):
     """
     if _is_root(issuer) or has_account_attribute(account=issuer, key='admin'):
         return True
-    # Check if user is a country admin
-    admin_in_country = set()
-    for kv in list_account_attributes(account=issuer):
-        if kv['key'].startswith('country-') and kv['value'] == 'admin':
-            admin_in_country.add(kv['key'].partition('-')[2])
-    resolved_rse_countries = {list_rse_attributes(rse_id=rse['rse_id']).get('country')
-                              for rse in parse_expression(kwargs['rse_expression'], filter={'vo': issuer.vo})}
-    if resolved_rse_countries.issubset(admin_in_country):
-        return True
+    # # Check if user is a country admin
+    # admin_in_country = set()
+    # for kv in list_account_attributes(account=issuer):
+    #     if kv['key'].startswith('country-') and kv['value'] == 'admin':
+    #         admin_in_country.add(kv['key'].partition('-')[2])
+    # resolved_rse_countries = {list_rse_attributes(rse_id=rse['rse_id']).get('country')
+    #                           for rse in parse_expression(kwargs['rse_expression'], filter={'vo': issuer.vo})}
+    # if resolved_rse_countries.issubset(admin_in_country):
+    #     return True
     return False
 
 
@@ -870,16 +870,16 @@ def perm_delete_global_account_limit(issuer, kwargs):
     """
     if _is_root(issuer) or has_account_attribute(account=issuer, key='admin'):
         return True
-    # Check if user is a country admin
-    admin_in_country = set()
-    for kv in list_account_attributes(account=issuer):
-        if kv['key'].startswith('country-') and kv['value'] == 'admin':
-            admin_in_country.add(kv['key'].partition('-')[2])
-    if admin_in_country:
-        resolved_rse_countries = {list_rse_attributes(rse_id=rse['rse_id']).get('country')
-                                  for rse in parse_expression(kwargs['rse_expression'], filter={'vo': issuer.vo})}
-        if resolved_rse_countries.issubset(admin_in_country):
-            return True
+    # # Check if user is a country admin
+    # admin_in_country = set()
+    # for kv in list_account_attributes(account=issuer):
+    #     if kv['key'].startswith('country-') and kv['value'] == 'admin':
+    #         admin_in_country.add(kv['key'].partition('-')[2])
+    # if admin_in_country:
+    #     resolved_rse_countries = {list_rse_attributes(rse_id=rse['rse_id']).get('country')
+    #                               for rse in parse_expression(kwargs['rse_expression'], filter={'vo': issuer.vo})}
+    #     if resolved_rse_countries.issubset(admin_in_country):
+    #         return True
     return False
 
 
@@ -893,13 +893,13 @@ def perm_delete_local_account_limit(issuer, kwargs):
     """
     if _is_root(issuer) or has_account_attribute(account=issuer, key='admin'):
         return True
-    # Check if user is a country admin
-    admin_in_country = []
-    for kv in list_account_attributes(account=issuer):
-        if kv['key'].startswith('country-') and kv['value'] == 'admin':
-            admin_in_country.append(kv['key'].partition('-')[2])
-    if admin_in_country and list_rse_attributes(rse_id=kwargs['rse_id']).get('country') in admin_in_country:
-        return True
+    # # Check if user is a country admin
+    # admin_in_country = []
+    # for kv in list_account_attributes(account=issuer):
+    #     if kv['key'].startswith('country-') and kv['value'] == 'admin':
+    #         admin_in_country.append(kv['key'].partition('-')[2])
+    # if admin_in_country and list_rse_attributes(rse_id=kwargs['rse_id']).get('country') in admin_in_country:
+    #     return True
 
     rse_attr = list_rse_attributes(rse_id=kwargs['rse_id'])
     quota_approvers = rse_attr.get('quota_approvers', None)
@@ -930,10 +930,10 @@ def perm_get_local_account_usage(issuer, kwargs):
     """
     if _is_root(issuer) or has_account_attribute(account=issuer, key='admin') or kwargs.get('account') == issuer:
         return True
-    # Check if user is a country admin
-    for kv in list_account_attributes(account=issuer):
-        if kv['key'].startswith('country-') and kv['value'] == 'admin':
-            return True
+    # # Check if user is a country admin
+    # for kv in list_account_attributes(account=issuer):
+    #     if kv['key'].startswith('country-') and kv['value'] == 'admin':
+    #         return True
     return False
 
 
