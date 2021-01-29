@@ -28,6 +28,13 @@ from rucio.core.rse_expression_parser import parse_expression
 from rucio.core.rule import get_rule
 from rucio.db.sqla.constants import IdentityType
 
+try:
+    # Python 2: "unicode" is built-in
+    unicode
+except NameError:
+    unicode = str
+    basestring = str
+
 
 def has_permission(issuer, action, kwargs):
     """
