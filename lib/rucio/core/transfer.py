@@ -1037,7 +1037,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                     else:
                         # the sources already founded is Tape too.
                         # multiple Tape source replicas are not allowed in FTS3.
-                        if transfers[req_id]['sources'][0][3] > ranking or (transfers[req_id]['sources'][0][3] == ranking and transfers[req_id]['sources'][0][4] <= link_ranking):
+                        if len(transfers[req_id]['sources']) and (transfers[req_id]['sources'][0][3] > ranking or (transfers[req_id]['sources'][0][3] == ranking and transfers[req_id]['sources'][0][4] <= link_ranking)):
                             continue
                         else:
                             transfers[req_id]['sources'] = []
