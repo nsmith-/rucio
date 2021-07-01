@@ -54,6 +54,7 @@ Individual contributors to the source code
 - Dhruv Sondhi <dhruvsondhi05@gmail.com>, 2021
 - Simon Fayer <simon.fayer05@imperial.ac.uk>, 2021
 - Ilija Vukotic <ivukotic@uchicago.edu>, 2020-2021
+- Nick Smith <nick.smith@cern.ch>, 2021
 
 
 Organisations employing contributors
